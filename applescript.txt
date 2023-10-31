@@ -1,1 +1,25 @@
-on run {input, parameters}	activate application "NotificationCenter"	tell application "System Events"		tell process "NotificationCenter"			set theWindow to group 1 of UI element 1 of scroll area 1 of window "Notification Center"			# click theWindow			set theActions to actions of theWindow			repeat with theAction in theActions				if description of theAction is "Reply" then					tell theWindow						perform theAction					end tell					exit repeat				end if			end repeat		end tell	end tell	return inputend run
+tell application "System Events"
+	try
+		repeat
+			set _groups to groups of UI element 1 of scroll area 1 of group 1 of window "Notification Center" of application process "NotificationCenter"
+			set numGroups to number of _groups
+			if numGroups = 0 then
+				exit repeat
+			end if
+			repeat with _group in _groups
+				set _actions to actions of _group
+				set actionPerformed to false
+				repeat with _action in _actions
+					if description of _action is in {"Reply"} then
+						perform _action
+						set actionPerformed to true
+						exit repeat
+					end if
+				end repeat
+				if actionPerformed then
+					exit repeat
+				end if
+			end repeat
+		end repeat
+	end try
+end tell
